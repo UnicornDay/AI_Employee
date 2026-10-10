@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+
+# Virtual Environments
+.venv/
+venv/
+env/
+
+# Environment Variables & Secrets (Keep your API keys safe)
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Employee Runtime Locks & Dynamic Logs
+*.pid
+employee.pid
+*.log
+
+# OS & Editor Files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

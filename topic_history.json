@@ -1,0 +1,57 @@
+[
+  {
+    "date": "2026-10-03",
+    "title": "Autonomous AI Coding Agents Trigger Enterprise Breaches and FTC Scrutiny",
+    "angle": "The developer rush to grant autonomous AI agents terminal execution and git privileges has triggered a catastrophic principal-agent failure—culminating in massive public repo leaks, out-of-control agent behavior, and imminent regulatory enforcement.",
+    "domain": "AI Tools & Automation",
+    "file": "2026-10-03_autonomous_ai_coding_agents_trigger_enterpris.md"
+  },
+  {
+    "date": "2026-10-03",
+    "ticker": "COH.AX",
+    "title": "Premium healthcare darling Cochlear hits oversold territory after a swift 13.6% weekly drop triggers shareholder class action",
+    "anomaly_type": "SUDDEN_CRASH",
+    "verdict": "ASYMMETRIC BOUNCE SETUP",
+    "file": "2026-10-03_COH_AX_premium_healthcare_darling_cochlear_hits.md"
+  },
+  {
+    "date": "2026-10-05",
+    "ticker": "DRO.AX",
+    "title": "DroneShield surges 16% in five days and pierces its upper Bollinger band following broker upgrades, attempting a breakout from a 54% peak-to-trough collapse.",
+    "anomaly_type": "ASX_UNUSUAL_VOLATILITY",
+    "verdict": "ASYMMETRIC BOUNCE SETUP",
+    "file": "2026-10-05_DRO_AX_droneshield_surges_16_in_five_days_and_p.md"
+  },
+  {
+    "date": "2026-10-06",
+    "ticker": "NKE",
+    "title": "Nike drops 9% following a Q1 earnings beat as top-line contraction and soft guidance derail turnaround expectations",
+    "anomaly_type": "EARNINGS_DISCONNECT",
+    "verdict": "ASYMMETRIC BOUNCE SETUP",
+    "file": "2026-10-06_NKE_nike_drops_9_following_a_q1_earnings_bea.md"
+  },
+  {
+    "date": "2026-10-06",
+    "ticker": "DRO.AX",
+    "title": "In-depth investigation of market anomaly in DRO.AX",
+    "anomaly_type": "USER_SPECIFIED_OPPORTUNITY",
+    "verdict": "ASYMMETRIC BOUNCE SETUP",
+    "file": "2026-10-06_DRO_AX_in_depth_investigation_of_market_anomaly.md"
+  },
+  {
+    "date": "2026-10-08",
+    "ticker": "XRO.AX",
+    "title": "Xero plummets into deeply oversold territory with an RSI of 26.8, creating a glaring valuation disconnect against booming US SaaS peers.",
+    "anomaly_type": "FUNDAMENTALS_VS_PRICE_DIVERGENCE",
+    "verdict": "ASYMMETRIC BOUNCE SETUP",
+    "file": "2026-10-08_XRO_AX_xero_plummets_into_deeply_oversold_terri.md"
+  },
+  {
+    "date": "2026-10-10",
+    "ticker": "MGH.AX",
+    "title": "Maas Group plunges and enters trading halt as Firmus shelves $44B AI float, jeopardizing $1.2B in pipeline contracts",
+    "anomaly_type": "ASX_UNUSUAL_VOLATILITY",
+    "verdict": "ASYMMETRIC BOUNCE SETUP",
+    "file": "2026-10-10_MGH_AX_maas_group_plunges_and_enters_trading_ha.md"
+  }
+]
