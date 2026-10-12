@@ -41,12 +41,12 @@ flowchart TD
 * **Deliverables**: Backtest charts (`*_rsi.png`, `*_bb.png`), daily report (`quant_daily_report.md`), and weekly fundamental report (`weekly_holistic_equity_report.md`).
 * **Run Immediately**: Double-click `RUN_QUANT_ANALYSIS_NOW.bat` or `RUN_THURSDAY_HOLISTIC_REPORT_NOW.bat`.
 
-### 3. ✍️ Rowan: Autonomous Tech Essayist & Anomaly Hunter
-* **Role**: Scans market horizons, detects irrational mispricings, validates hypotheses quantitatively, and writes publication-ready articles.
+### 3. ✍️ Rowan: Autonomous Trading Concept Hunter & Quantitative Essayist
+* **Role**: Formulates cutting-edge trading concepts (Volatility Squeeze, Cointegration Pairs, Hurst Regime Filters, Anchored VWAP, Fractional Differencing) and tests them on live market data with runnable Python/Colab backtests.
 * **Cadence**: Headless run every morning at 07:00 AM.
-* **Deliverables**: Ready-to-copy Medium articles (`latest_medium_draft.md`), executive review queue (`REVIEW_QUEUE.md`), and automated topic deduplication (`topic_history.json`).
+* **Deliverables**: In-depth Medium articles (`latest_medium_draft.md`), executive review queue (`REVIEW_QUEUE.md`), and automated topic deduplication (`topic_history.json`).
 * **Full Documentation**: [**ROWAN_EMPLOYEE_GUIDE.md**](ROWAN_EMPLOYEE_GUIDE.md).
-* **Run Immediately**: Double-click `RUN_WRITER_NOW.bat`.
+* **Run Immediately**: Double-click `RUN_WRITER_NOW.bat` (or run `py writer_employee.py --concept "Your Strategy Idea"`).
 
 ---
 

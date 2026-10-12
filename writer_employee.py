@@ -88,8 +88,18 @@ SCAN_WATCHLIST = [
     "NKE", "BABA", "META", "AMZN", "CELH"
 ]
 
-# Market Anomaly News Feeds
+# Market & Quantitative Trading News Feeds
 MARKET_NEWS_FEEDS = [
+    {
+        "category": "Quant & Trading Concept Innovations",
+        "query": "(\"quantitative trading\" OR \"algorithmic trading\" OR \"statistical arbitrage\" OR \"trading strategy\") (\"backtest\" OR \"alpha\" OR \"indicator\" OR \"machine learning\")",
+        "hl": "en-US", "gl": "US", "ceid": "US:en"
+    },
+    {
+        "category": "Volatility & Structural Market Mechanics",
+        "query": "(\"volatility squeeze\" OR \"implied volatility\" OR \"order flow\" OR \"liquidity cascade\" OR \"market microstructure\" OR \"momentum breakout\") (trading OR shares)",
+        "hl": "en-US", "gl": "US", "ceid": "US:en"
+    },
     {
         "category": "ASX Plunges & Movers",
         "query": "ASX (plunge OR slump OR crash OR surge OR \"falls 10%\" OR \"tumbles\" OR \"trading halt\") shares",
@@ -103,11 +113,6 @@ MARKET_NEWS_FEEDS = [
     {
         "category": "M&A, Takeovers & Capital Raisings",
         "query": "(acquisition OR takeover OR \"capital raising\" OR \"share placement\") (ASX OR \"Wall Street\" OR \"stock\")",
-        "hl": "en-AU", "gl": "AU", "ceid": "AU:en"
-    },
-    {
-        "category": "Dividends & Yield Anomalies",
-        "query": "(\"high dividend\" OR \"dividend cut\" OR \"yield trap\" OR \"ex-dividend\") (shares OR stock)",
         "hl": "en-AU", "gl": "AU", "ceid": "AU:en"
     },
     {
@@ -385,37 +390,41 @@ def scan_news_anomalies() -> list:
 
 
 # ==============================================================================
-# STAGE 2: FIND OPPORTUNITY / IDEA (Unusual / Interesting Situations)
+# STAGE 2: FIND OPPORTUNITY / IDEA (New Concepts & Innovative Trading Ideas)
 # ==============================================================================
 
-def find_opportunity_idea(quant_anomalies: list, news_items: list, history: list, manual_ticker: str = "") -> dict:
+def find_opportunity_idea(quant_anomalies: list, news_items: list, history: list, manual_ticker: str = "", manual_concept: str = "") -> dict:
     """
-    Select the single most compelling unusual or interesting market situation.
-    Archetypes:
-      - Stock suddenly falls 15%
-      - Company reports strong earnings but stock falls
-      - Acquisition / M&A changes valuation
-      - High-dividend stock behaves unexpectedly (yield trap)
-      - Several stocks in industry move together (contagion)
-      - AI company becomes dramatically overvalued
-      - ASX stock experiences unusual volatility
-      - Market crash / selloff creates historical entry point
-      - Fundamentals improve while price falls
+    Select or formulate a cutting-edge TRADING CONCEPT or INNOVATIVE STRATEGY IDEA,
+    paired with an empirical test asset from today's market scan.
+    Paradigms:
+      - VOLATILITY_COMPRESSION: Volatility squeeze (Bollinger inside Keltner / ATR compression)
+      - STATISTICAL_ARBITRAGE: Cointegration, spread stationarity, and Ornstein-Uhlenbeck mean-reversion
+      - REGIME_DETECTION: Hurst Exponent & volatility clustering to filter market state
+      - ORDER_FLOW_MICROSTRUCTURE: Anchored VWAP standard deviation bands & volume absorption
+      - ASYMMETRIC_MEAN_REVERSION: Multi-sigma Z-Score divergence beyond naive RSI
+      - DUAL_MOMENTUM_ROTATION: Cross-sectional relative strength & sector rotation
+      - ML_FEATURE_ENGINEERING: Fractional differentiation & preservation of memory
+      - CONVEX_POSITION_SIZING: Dynamic Half-Kelly criterion & volatility targeting
+      - CATALYST_PEAD_MOMENTUM: Post-Earnings Announcement Drift & volatility mispricing
     """
-    if manual_ticker:
-        log(f"Manual ticker/opportunity specified: '{manual_ticker}'")
+    if manual_concept or manual_ticker:
+        ticker = manual_ticker.upper() if manual_ticker else (quant_anomalies[0]["ticker"] if quant_anomalies else "CSL.AX")
+        concept_title = manual_concept or f"Innovative Quantitative Strategy in {ticker}"
+        log(f"Manual input specified: Concept='{manual_concept}', Ticker='{ticker}'")
         return {
-            "ticker": manual_ticker.upper(),
-            "company_name": manual_ticker.upper(),
-            "anomaly_type": "USER_SPECIFIED_OPPORTUNITY",
-            "headline": f"In-depth investigation of market anomaly in {manual_ticker.upper()}",
-            "core_anomaly": f"User requested deep analysis of {manual_ticker.upper()}.",
-            "hypothesis": "Market pricing vs. intrinsic business fundamentals divergence.",
-            "search_query": f"{manual_ticker} stock financial analysis news"
+            "trading_concept": concept_title,
+            "concept_paradigm": "USER_SPECIFIED_CONCEPT",
+            "ticker": ticker,
+            "company_name": ticker,
+            "headline": f"{concept_title}: Testing New Trading Mechanics with {ticker}",
+            "core_concept_thesis": f"Explores novel quantitative trading edge ({concept_title}) tested on live market data.",
+            "hypothesis": f"Quantitative edge derived from {concept_title} providing asymmetric risk/reward vs benchmark.",
+            "search_query": f"{concept_title} quantitative trading strategy backtest python"
         }
 
-    history_entries = [f"- {t.get('ticker', '')}: {t.get('title', '')} ({t.get('date', '')})" for t in history[-10:]]
-    history_context = "\n".join(history_entries) if history_entries else "No opportunities recorded in recent history."
+    history_entries = [f"- {t.get('trading_concept', t.get('title', ''))} [{t.get('ticker', '')}] ({t.get('date', '')})" for t in history[-10:]]
+    history_context = "\n".join(history_entries) if history_entries else "No concepts recorded in recent history."
 
     quant_text = "\n".join([
         f"• [{a['ticker']}] Price: ${a['price']} | 1d: {a['pct_1d']:+}% | 5d: {a['pct_5d']:+}% | RSI: {a['rsi']} | DD_52w: {a['drawdown_52w']}% | Flags: {a['flags']}"
@@ -427,41 +436,47 @@ def find_opportunity_idea(quant_anomalies: list, news_items: list, history: list
         for n in news_items[:35]
     ])
 
-    system_prompt = """You are Rowan, an elite autonomous equity analyst, market investigator, and financial essayist.
-You specialize in discovering market mispricings, unusual corporate situations, earnings disconnects, and asymmetric risk/reward setups across ASX and Global equities."""
+    system_prompt = """You are Rowan, an elite autonomous quantitative researcher, algorithmic trader, and top Medium essayist.
+You specialize in discovering and explaining NOVEL TRADING CONCEPTS, CUTTING-EDGE STRATEGY IDEAS, and MATHEMATICAL TRADING EDGES for Medium readers (developers, quants, algorithmic traders).
+You believe standard retail indicators (plain 14-period RSI, basic moving average crossovers, textbook chart patterns) are commoditized or broken.
+Your mission is to formulate and teach modern, innovative trading concepts—combining quantitative theory, behavioral market anomalies, and practical Python backtests."""
 
-    prompt = f"""Review the morning market data and news signals:
+    prompt = f"""Review the morning market data, quantitative outliers, and algorithmic research signals:
 
-[RECENTLY ANALYZED TICKERS/TOPICS - DO NOT REPEAT THESE RECENTLY COVERED STOCKS]:
+[RECENTLY EXPLORED CONCEPTS & TICKERS - DO NOT DUPLICATE THESE TOPICS]:
 {history_context}
 
 [QUANTITATIVE STATISTICAL ANOMALIES TODAY]:
 {quant_text}
 
-[MARKET NEWS SIGNALS & CORPORATE DEVELOPMENTS]:
+[MARKET & QUANTITATIVE NEWS SIGNALS]:
 {news_text}
 
 TASK:
-Identify ONE standout UNUSUAL or INTERESTING market situation today.
-Prioritize archetypes like:
-1. A stock suddenly falling 10-20% (panic selloff / capitulation)
-2. Strong earnings or record revenue reported, but share price dumps (guidance disconnect / expectations trap)
-3. An acquisition, M&A, or capital raising fundamentally reshaping valuation or debt
-4. A high-dividend stock behaving abnormally (dividend cut / yield trap vs. bargain)
-5. Industry-wide co-movement or sector contagion
-6. An AI leader becoming dramatically overvalued or suffering multiple compression
-7. An ASX stock experiencing extreme volatility or volume breakout
-8. Fundamentals improving (earnings growth, margin expansion) while share price collapses
+Formulate ONE standout NEW TRADING CONCEPT OR INNOVATIVE STRATEGY IDEA to teach your Medium readers today.
+Medium readers crave actionable, intellectually stimulating concepts such as:
+1. VOLATILITY_COMPRESSION: Volatility squeeze (Bollinger Bands contracting inside Keltner Channels / ATR compression) predicting explosive asymmetric expansion.
+2. STATISTICAL_ARBITRAGE: Cointegration, synthetic spread stationarity, and Ornstein-Uhlenbeck mean-reverting pairs.
+3. REGIME_DETECTION: Using Hurst Exponent, volatility clustering, or Markov regime switching to dynamically toggle between trend and mean-reversion.
+4. ORDER_FLOW_MICROSTRUCTURE: Anchored VWAP standard deviation bands, institutional volume absorption, and liquidity void sweeps.
+5. ASYMMETRIC_MEAN_REVERSION: Rolling Z-Score divergence and extreme multi-sigma reversion beyond naive RSI.
+6. DUAL_MOMENTUM_ROTATION: Cross-sectional relative strength ranking and regime-filtered momentum rotation across sectors.
+7. ML_FEATURE_ENGINEERING: Fractional differentiation (preserving price series memory while achieving stationarity) or meta-labeling.
+8. CONVEX_POSITION_SIZING: Dynamic Half-Kelly criterion, volatility targeting, and risk parity at the trade level.
+9. CATALYST_PEAD_MOMENTUM: Post-Earnings Announcement Drift (PEAD) and implied vs realized volatility skew.
+
+Pair this concept with ONE standout asset from today's market scan (e.g. {quant_anomalies[0]['ticker'] if quant_anomalies else 'CSL.AX'}) as the empirical test case!
 
 Return your selection strictly as JSON matching this schema:
 {{
-  "ticker": "Exact ticker symbol (e.g. PLS.AX, CSL.AX, NKE, NVDA, ORG.AX)",
-  "company_name": "Full company name",
-  "anomaly_type": "One of: SUDDEN_CRASH / EARNINGS_DISCONNECT / ACQUISITION_VALUATION_SHOCK / DIVIDEND_ANOMALY / INDUSTRY_CONTAGION / AI_OVERVALUATION / ASX_UNUSUAL_VOLATILITY / FUNDAMENTALS_VS_PRICE_DIVERGENCE",
-  "headline": "Punchy 1-sentence description of the unusual situation",
-  "core_anomaly": "What makes this situation unexpected or irrational?",
-  "hypothesis": "The specific testable investment thesis (e.g. Asymmetric oversold bounce vs. structural value trap)",
-  "search_query": "3-5 targeted keywords to research the catalyst, news, and analyst commentary"
+  "trading_concept": "Concise name of the new trading concept (e.g. 'The Hurst Exponent Regime Filter' or 'The Multi-Sigma Volatility Squeeze Engine')",
+  "concept_paradigm": "One of: VOLATILITY_COMPRESSION / STATISTICAL_ARBITRAGE / REGIME_DETECTION / ORDER_FLOW_MICROSTRUCTURE / ASYMMETRIC_MEAN_REVERSION / DUAL_MOMENTUM_ROTATION / ML_FEATURE_ENGINEERING / CONVEX_POSITION_SIZING / CATALYST_PEAD_MOMENTUM",
+  "ticker": "Ticker symbol used to empirically test and demonstrate the concept (e.g. MGH.AX, NVDA, BHP.AX, XRO.AX)",
+  "company_name": "Full company name of test asset",
+  "headline": "Arresting, concept-forward title for Medium readers",
+  "core_concept_thesis": "Why this trading concept creates an edge, and why conventional retail indicators fail",
+  "hypothesis": "The specific quantitative trading hypothesis to backtest (entry triggers, invalidation, expected payoff)",
+  "search_query": "3-5 targeted keywords to research technical context and empirical benchmarks"
 }}
 Return ONLY raw JSON, with no enclosing code blocks or formatting."""
 
@@ -474,16 +489,17 @@ Return ONLY raw JSON, with no enclosing code blocks or formatting."""
         data = json.loads(cleaned)
         return data
     except Exception as e:
-        log(f"Error parsing opportunity JSON: {e}. Fallback to top quantitative anomaly...")
-        fallback_ticker = quant_anomalies[0]["ticker"] if quant_anomalies else "PLS.AX"
+        log(f"Error parsing opportunity JSON: {e}. Fallback to quantitative volatility concept...")
+        fallback_ticker = quant_anomalies[0]["ticker"] if quant_anomalies else "CSL.AX"
         return {
+            "trading_concept": "The Asymmetric Volatility Squeeze Breakout",
+            "concept_paradigm": "VOLATILITY_COMPRESSION",
             "ticker": fallback_ticker,
             "company_name": fallback_ticker,
-            "anomaly_type": "SUDDEN_CRASH",
-            "headline": f"Unusual price action and extreme statistical divergence in {fallback_ticker}",
-            "core_anomaly": "Severe price drop and oversold indicators.",
-            "hypothesis": "Extreme oversold condition presenting asymmetric mean-reversion setup.",
-            "search_query": f"{fallback_ticker} stock drop earnings analysis"
+            "headline": f"Beyond Naive RSI: How the Volatility Squeeze Engine Trades Breakouts in {fallback_ticker}",
+            "core_concept_thesis": "Markets transition cyclically between low volatility compression and explosive expansion.",
+            "hypothesis": "Bollinger bandwidth compression inside Keltner channels predicts impending multi-sigma trend expansion.",
+            "search_query": f"{fallback_ticker} volatility squeeze trading strategy backtest python"
         }
 
 
@@ -559,27 +575,30 @@ def research_stock_data(opportunity: dict) -> dict:
 
 def test_the_idea(opportunity: dict, research: dict) -> dict:
     """
-    Run quantitative and fundamental validation tests to evaluate the idea.
-    Calculates:
+    Execute quantitative audit on the strategy hypothesis:
+      - Volatility compression / Bollinger bandwidth
+      - Multi-sigma rolling Z-score
       - 14-day RSI (momentum oversold/overbought)
-      - 20-day Bollinger Bands (%B and distance from 2-standard deviations)
-      - Volatility & 30-day drawdown
-      - Volume surge ratio (capitulation test)
-      - Valuation discount (Forward P/E vs historical/peer norms)
-      - Solvency & margin safety check
+      - ATR (Average True Range) volatility percentage
+      - Volume surge ratio (capitulation / absorption test)
+      - Valuation & balance sheet sanity check
     Assigns:
       - Opportunity Score (1-10)
-      - Verdict: [ASYMMETRIC BOUNCE] / [VALUE TRAP] / [BUBBLE EXHAUSTION] / [ACCUMULATION]
+      - Strategy Verdict based on the specific concept paradigm
     """
     metrics = research.get("metrics", {})
     hist = metrics.get("history_df", pd.DataFrame())
 
-    log(f"Running quantitative test suite on hypothesis for {opportunity.get('ticker')}...")
+    log(f"Running quantitative audit on trading concept for {opportunity.get('ticker')}...")
 
     rsi_14 = 50.0
     pct_b = 0.5
+    bb_bandwidth = 0.10
+    z_score_20 = 0.0
     vol_ratio = 1.0
     pct_drop_30d = 0.0
+    atr_14_pct = 2.0
+    sma50_trend = "NEUTRAL"
 
     if not hist.empty and len(hist) >= 20:
         close = hist["Close"]
@@ -592,12 +611,31 @@ def test_the_idea(opportunity: dict, research: dict) -> dict:
         rsi_series = (100 - (100 / (1 + rs)))
         rsi_14 = float(rsi_series.iloc[-1]) if not pd.isna(rsi_series.iloc[-1]) else 50.0
 
-        # Bollinger Bands
+        # Bollinger Bands & Bandwidth
         sma20 = float(close.rolling(20).mean().iloc[-1])
-        std20 = float(close.rolling(20).std().iloc[-1])
+        std20 = float(close.rolling(20).std().iloc[-1]) if float(close.rolling(20).std().iloc[-1]) > 0 else 0.01
         upper_bb = sma20 + (2 * std20)
         lower_bb = sma20 - (2 * std20)
         pct_b = float((cur - lower_bb) / (upper_bb - lower_bb)) if upper_bb != lower_bb else 0.5
+        bb_bandwidth = round(float((upper_bb - lower_bb) / sma20), 4) if sma20 > 0 else 0.10
+        z_score_20 = round(float((cur - sma20) / std20), 2)
+
+        # ATR 14
+        if "High" in hist.columns and "Low" in hist.columns:
+            high = hist["High"]
+            low = hist["Low"]
+            tr = pd.concat([
+                high - low,
+                (high - close.shift(1)).abs(),
+                (low - close.shift(1)).abs()
+            ], axis=1).max(axis=1)
+            atr14 = float(tr.rolling(14).mean().iloc[-1])
+            atr_14_pct = round((atr14 / cur) * 100, 2) if cur > 0 else 2.0
+
+        # SMA 50 Trend
+        if len(close) >= 50:
+            sma50 = float(close.rolling(50).mean().iloc[-1])
+            sma50_trend = "BULLISH_ABOVE_50SMA" if cur >= sma50 else "BEARISH_BELOW_50SMA"
 
         # Volume Capitulation Test
         vol = hist["Volume"]
@@ -616,34 +654,37 @@ def test_the_idea(opportunity: dict, research: dict) -> dict:
     op_margins = metrics.get("operating_margins")
     drawdown = metrics.get("drawdown_52w", 0.0)
 
-    # Evaluate Hypothesis
-    anomaly_type = opportunity.get("anomaly_type", "")
-    score = 7.0
-    verdict = "ASYMMETRIC BOUNCE SETUP"
+    # Concept-Driven Strategy Verdict
+    paradigm = opportunity.get("concept_paradigm", "")
+    score = 7.5
+    verdict = f"HIGH-CONVICTION {paradigm} SETUP" if paradigm else "ASYMMETRIC EDGE SETUP"
     risk_level = "MODERATE"
 
-    if rsi_14 <= 25.0 and pct_b <= 0.15:
-        score += 1.5
+    if bb_bandwidth < 0.08:
+        score += 1.0
+        verdict = "EXTREME VOLATILITY COMPRESSION (BREAKOUT IMMINENT)"
+    elif abs(z_score_20) >= 2.2:
+        score += 1.0
+        verdict = "STATISTICAL MULTI-SIGMA MEAN REVERSION"
+    elif rsi_14 <= 25.0 and pct_b <= 0.15:
+        score += 1.0
         verdict = "ASYMMETRIC MEAN-REVERSION OPPORTUNITY"
-        risk_level = "CALCULATED ASYMMETRIC UPSIDE"
     elif rsi_14 >= 80.0:
         score = 8.5
-        verdict = "VALUATION BUBBLE / OVERBOUGHT EXHAUSTION"
-        risk_level = "ELEVATED CORRECTION RISK"
+        verdict = "EXTREME OVERBOUGHT / MEAN REVERSION SHORT SETUP"
 
     if de_ratio and de_ratio > 200.0:
-        score -= 1.5
-        verdict = "VALUE TRAP / SOLVENCY RISK"
-        risk_level = "HIGH DOWNSIDE VOLATILITY"
-
-    if op_margins and op_margins > 0.15 and drawdown <= -20.0:
-        score += 1.0
-        verdict = "QUALITY AT A DISCOUNT (BUFFETT ANOMALY)"
+        score -= 0.5
+        risk_level = "ELEVATED SOLVENCY RISK"
 
     test_results = {
         "ticker": opportunity.get("ticker"),
         "rsi_14": round(rsi_14, 1),
         "pct_b": round(pct_b, 2),
+        "bb_bandwidth": bb_bandwidth,
+        "z_score_20": z_score_20,
+        "atr_14_pct": atr_14_pct,
+        "sma50_trend": sma50_trend,
         "vol_ratio_5d_vs_30d": vol_ratio,
         "pct_drop_30d": pct_drop_30d,
         "drawdown_52w": drawdown,
@@ -657,79 +698,101 @@ def test_the_idea(opportunity: dict, research: dict) -> dict:
         "asymmetric_upside_target": metrics.get("target_mean_price")
     }
 
-    log(f"Test Verdict: {verdict} | Score: {test_results['opportunity_score']}/10 | RSI: {rsi_14:.1f}")
+    log(f"Test Verdict: {verdict} | Score: {test_results['opportunity_score']}/10 | Bandwidth: {bb_bandwidth} | Z-Score: {z_score_20}")
     return test_results
 
 
 # ==============================================================================
-# STAGE 5: WRITE ARTICLE (Medium-Style Deep Investment Thesis)
+# STAGE 5: WRITE ARTICLE (New Trading Concepts & Algorithmic Strategy Deep Dives)
 # ==============================================================================
 
 def write_investment_article(opportunity: dict, research: dict, test_results: dict) -> str:
-    """Compose an 800-1,500 word Medium investment essay with real test data and Colab code."""
+    """Compose an 1,000-1,800 word Medium technical article teaching a new trading concept or innovative strategy idea."""
     today_str = datetime.now().strftime("%A, %d %B %Y")
     metrics = research.get("metrics", {})
     news_items = research.get("catalyst_news", [])
+
+    concept_name = opportunity.get("trading_concept") or opportunity.get("headline", "Innovative Trading Concept")
+    paradigm = opportunity.get("concept_paradigm") or opportunity.get("anomaly_type", "QUANTITATIVE_STRATEGY")
 
     news_text = "\n".join([
         f"- {n['title']} (Source: {n['source']}, {n['published']}): {n['summary']}"
         for n in news_items[:6]
     ]) or "Standard market disclosures and price fluctuations."
 
-    system_prompt = """You are Rowan, an acclaimed investment essayist, former quantitative trader, and technology analyst.
-You write for top Medium publications (e.g. The Startup, Towards Data Science, Generative AI, DataDrivenInvestor).
-Your writing is:
-- Magnetic: arresting titles, conversational yet deeply analytical prose.
-- Anti-hype: You ruthlessly dissect market psychology, Wall Street short-termism, and herd behavior.
-- Data-backed: You embed quantitative tests, technicals (RSI, Bollinger Bands), and fundamental valuation multiples.
-- Actionable: You provide runnable Python code / Colab blueprints so the reader can verify the thesis on their own machine."""
+    system_prompt = """You are Rowan, an acclaimed quantitative trading strategist, algorithmic systems architect, and top Medium writer (featured in Towards Data Science, DataDrivenInvestor, and Generative AI).
+You specialize in introducing NOVEL TRADING CONCEPTS, CUTTING-EDGE STRATEGY IDEAS, and MATHEMATICAL EDGES for developers, quants, and traders on Medium.
+Your writing style is:
+- Concept-First & Educational: You deconstruct complex quantitative, statistical, and behavioral market mechanics into gripping, intuitive explanations that Medium readers bookmark and study.
+- Anti-Retail Hype: You relentlessly expose why naive retail trading indicators (static 14-period RSI, basic 50/200 SMA crosses, textbook chart patterns) decay into unprofitable noise.
+- Mathematically Rigorous: You explain the formulas, statistical distributions, and quantitative intuition behind the edge.
+- Code-Driven & Reproducible: Every article includes a complete, beautiful, copy-pasteable Python backtest script using real market data that readers can run in Google Colab."""
 
     prompt = f"""Today is {today_str}.
 
-Write a high-conviction, publication-grade Medium investment article analyzing this market situation:
+Write a high-conviction, publication-grade Medium technical article introducing this NEW TRADING CONCEPT / STRATEGY IDEA:
 
-[THE OPPORTUNITY / ANOMALY]:
-Ticker: {opportunity.get('ticker')} ({metrics.get('company_name')})
-Anomaly Type: {opportunity.get('anomaly_type')}
+[THE TRADING CONCEPT / IDEA]:
+Concept Name: {concept_name}
+Paradigm: {paradigm}
 Headline: {opportunity.get('headline')}
-Core Anomaly: {opportunity.get('core_anomaly')}
-Hypothesis: {opportunity.get('hypothesis')}
+Core Thesis: {opportunity.get('core_concept_thesis') or opportunity.get('core_anomaly')}
+Strategy Hypothesis: {opportunity.get('hypothesis')}
 
-[FINANCIAL METRICS & VALUATION]:
+[EMPIRICAL CASE STUDY ASSET]:
+Ticker: {opportunity.get('ticker')} ({metrics.get('company_name')})
 Current Price: ${metrics.get('current_price')} {metrics.get('currency')}
 52-Week Range: [${metrics.get('low_52w')} - ${metrics.get('high_52w')}]
-Drawdown from 52-Week High: {metrics.get('drawdown_52w')}%
+Drawdown from High: {metrics.get('drawdown_52w')}%
 Trailing P/E: {metrics.get('trailing_pe')} | Forward P/E: {metrics.get('forward_pe')}
-Operating Margin: {metrics.get('operating_margins')} | Debt-to-Equity: {metrics.get('debt_to_equity')}
-Consensus Target Price: ${metrics.get('target_mean_price')}
 
-[QUANTITATIVE TEST RESULTS]:
+[QUANTITATIVE TEST & METRICS ON CASE ASSET]:
 14-Day RSI: {test_results.get('rsi_14')}
 Bollinger Band %B: {test_results.get('pct_b')}
-Volume Capitulation Ratio (5d vs 30d avg): {test_results.get('vol_ratio_5d_vs_30d')}x
+Bollinger Bandwidth (Compression): {test_results.get('bb_bandwidth')}
+Rolling 20-Day Z-Score: {test_results.get('z_score_20')}
+14-Day ATR Volatility: {test_results.get('atr_14_pct')}%
+50-Day Trend State: {test_results.get('sma50_trend')}
+Volume Absorption Ratio (5d vs 30d avg): {test_results.get('vol_ratio_5d_vs_30d')}x
 Opportunity Score: {test_results.get('opportunity_score')}/10
-Verdict: {test_results.get('verdict')}
-Risk Profile: {test_results.get('risk_level')}
+Strategy Verdict: {test_results.get('verdict')}
 
-[RECENT NEWS & CATALYST CONTEXT]:
+[MARKET & CATALYST CONTEXT]:
 {news_text}
 
-MANDATORY EDITORIAL REQUIREMENTS:
-1. WORD COUNT: Roughly 800 to 1,500 words.
-2. TITLE & SUBTITLE: Create an intriguing, scroll-stopping H1 title (e.g. "Down 15% on Record Earnings: Why the Market Got X Wrong" or "The $10B AI Anomaly Hiding in Plain Sight") followed by a gripping H3 subtitle.
-3. THE SETUP (The Anomaly): Open with the tension—why does this market move look irrational, extreme, or counterintuitive?
-4. THE CATALYST & SIGNAL: Unpack what actually happened in the business vs. how the market overreacted.
-5. TESTING THE THESIS (The Quantitative Data): Embed the technical and fundamental test results (RSI, Bollinger %B, Drawdown, P/E multiples). Show whether this is a "Value Trap / Falling Knife" or an "Asymmetric Opportunity".
-6. THE MENTAL MODEL: Apply a powerful investing/economic framework (e.g. Mr. Market, Reflexivity, Schelling points, Margin of Safety, Jevons paradox, or Asymmetric Payoffs).
-7. ACTIONABLE PYTHON / COLAB PROJECT:
-   - Provide a clean, runnable Python script that readers can run in Google Colab to scan for this exact anomaly or backtest this entry trigger.
-8. THE STRATEGIC VERDICT: Direct takeaways for retail investors, fund managers, and technical founders.
-9. MEDIUM HASHTAGS: Conclude on the final line with 5-7 curated tags (e.g. #Investing #Stocks #Finance #ASX #StockMarket #Python #ArtificialIntelligence).
+MANDATORY EDITORIAL STRUCTURE FOR MEDIUM READERS:
+1. WORD COUNT: Approximately 1,000 to 1,800 words. Rich, in-depth, and substantive.
+2. TITLE & SUBTITLE:
+   - Create an irresistible, concept-centric H1 title (e.g. "Beyond the 14-Day RSI: The Volatility Squeeze Strategy That Actually Works" or "The Cointegration Alpha: How to Trade Statistical Arbitrage in Python").
+   - Follow with an intriguing H3 subtitle setting the hook for quants and active traders.
+3. THE FLAW IN CONVENTIONAL WISDOM:
+   - Open by addressing why 95% of retail traders lose using standard indicators. Explain the flaw in popular indicators when applied to this specific market phenomenon.
+4. THE NEW TRADING CONCEPT UNPACKED:
+   - Define the new concept or strategy clearly. Explain the underlying mathematical intuition (e.g. volatility cycles, stationary time series, regime switches, order flow absorption).
+5. THE MATHEMATICAL / ALGORITHMIC MECHANISM:
+   - Walk through the core mathematical formula or quantitative rules step-by-step so the reader understands the mechanics.
+6. REAL-WORLD CASE STUDY & QUANTITATIVE AUDIT:
+   - Apply this concept directly to {opportunity.get('ticker')} and recent market dynamics using the quantitative metrics above.
+   - Show how the strategy signals compare to naive indicator readings.
+7. COMPLETE RUNNABLE PYTHON / GOOGLE COLAB PROJECT:
+   - Provide a full, clean, standalone Python script using yfinance, pandas, numpy, and matplotlib.
+   - The script must:
+     a) Download historical data for {opportunity.get('ticker')}.
+     b) Vectorially compute the custom concept indicator / strategy rules.
+     c) Generate Buy/Sell/Hold signals without lookahead bias.
+     d) Compute an equity curve and benchmark comparison (Cumulative Return, Sharpe, Max Drawdown).
+     e) Plot the indicator and trading performance clearly.
+8. EXECUTION REALITIES & RISK ARCHITECTURE:
+   - Detail position sizing rules (e.g. Volatility targeting, Half-Kelly criterion), stop invalidation points, and where this strategy regime fails.
+9. THE 3 GOLDEN RULES:
+   - Summarize 3 sharp, memorable takeaways the reader can immediately apply.
+10. MEDIUM HASHTAGS:
+    - End on the final line with 6-8 relevant tags: #Trading #AlgorithmicTrading #Python #QuantitativeFinance #StockMarket #Investing #DataScience
 
-Format the output strictly in clean, beautiful Markdown ready to paste into Medium."""
+Format the entire output in clean, elegant GitHub-flavored Markdown ready to paste into Medium."""
 
-    log("Composing full-length Medium investment article with Gemini...")
-    article_md = call_gemini(prompt, system_instruction=system_prompt, min_words=500)
+    log("Composing full-length Medium trading concept article with Gemini...")
+    article_md = call_gemini(prompt, system_instruction=system_prompt, min_words=600)
     return article_md
 
 
@@ -742,39 +805,45 @@ def generate_review_package(opportunity: dict, research: dict, test_results: dic
     today_str = datetime.now().strftime("%Y-%m-%d %H:%M")
     metrics = research.get("metrics", {})
     ticker = opportunity.get("ticker", "TICKER")
+    concept_name = opportunity.get("trading_concept") or opportunity.get("headline", "Innovative Trading Concept")
+    paradigm = opportunity.get("concept_paradigm", "QUANTITATIVE_STRATEGY")
+
     lines = article_md.split("\n")
-    title = lines[0].replace("#", "").strip() if lines else "Market Opportunity Analysis"
+    title = lines[0].replace("#", "").strip() if lines else concept_name
     subtitle = lines[2].replace("###", "").replace("*", "").strip() if len(lines) > 2 else ""
     word_count = len(article_md.split())
     read_time = max(1, round(word_count / 220))
 
-    review_content = f"""# 📋 Rowan's Morning Review Queue: Investment Opportunity
+    review_content = f"""# 📋 Rowan's Morning Review Queue: New Trading Concept & Strategy
 
 > **Executive Status**: Ready for Review & Publishing  
-> **Generated**: {today_str} | **Analyst**: Rowan (Autonomous Investment Essayist)
+> **Generated**: {today_str} | **Analyst**: Rowan (Autonomous Quantitative Trading Essayist)
 
 ---
 
 ## 🎯 Executive Pitch (60-Second Briefing)
 
-* **Company & Ticker**: **{metrics.get('company_name', ticker)} ({ticker})**
-* **Market Anomaly**: **{opportunity.get('anomaly_type')}** — *{opportunity.get('headline')}*
-* **Core Hypothesis**: {opportunity.get('hypothesis')}
+* **Trading Concept / Strategy**: **{concept_name}**
+* **Strategy Paradigm**: **`{paradigm}`**
+* **Case Study Asset**: **{metrics.get('company_name', ticker)} ({ticker})**
+* **Core Trading Edge**: {opportunity.get('core_concept_thesis') or opportunity.get('core_anomaly')}
+* **Working Hypothesis**: {opportunity.get('hypothesis')}
 * **Rowan's Quantitative Verdict**: **`{test_results.get('verdict')}`** (Opportunity Score: **{test_results.get('opportunity_score')}/10**)
 
 ---
 
-## 📊 Opportunity Scorecard & Test Results
+## 📊 Quantitative Scorecard & Technical Audit
 
 | Dimension | Metric | Assessment |
 | :--- | :--- | :--- |
-| **Current Price** | ${metrics.get('current_price')} {metrics.get('currency')} | 52-Week Range: [${metrics.get('low_52w')} - ${metrics.get('high_52w')}] |
-| **52-Week Drawdown** | **{metrics.get('drawdown_52w')}%** | {'Extreme Drawdown' if metrics.get('drawdown_52w', 0) < -25 else 'Moderate Pullback'} |
-| **14-Day RSI** | **{test_results.get('rsi_14')}** | {'Deeply Oversold (<30)' if test_results.get('rsi_14', 50) <= 30 else ('Overbought (>75)' if test_results.get('rsi_14', 50) >= 75 else 'Neutral Momentum')} |
-| **Bollinger Band %B** | **{test_results.get('pct_b')}** | {'Trading below lower band' if test_results.get('pct_b', 0.5) <= 0.15 else 'Within normal bands'} |
-| **Valuation (Trailing / Forward P/E)** | {metrics.get('trailing_pe') or 'N/A'} / **{metrics.get('forward_pe') or 'N/A'}** | Consensus Target: ${metrics.get('target_mean_price') or 'N/A'} |
-| **Volume Capitulation Test** | **{test_results.get('vol_ratio_5d_vs_30d')}x** | {'Panic capitulation volume' if test_results.get('vol_ratio_5d_vs_30d', 1) > 1.5 else 'Normal volume'} |
-| **Risk / Reward Profile** | **{test_results.get('risk_level')}** | Strategic Play: {test_results.get('verdict')} |
+| **Test Asset Price** | ${metrics.get('current_price')} {metrics.get('currency')} | 52-Week Range: [${metrics.get('low_52w')} - ${metrics.get('high_52w')}] |
+| **Bollinger Bandwidth** | **{test_results.get('bb_bandwidth')}** | {'Extreme Compression (Breakout Setup)' if test_results.get('bb_bandwidth', 0.1) < 0.08 else 'Normal Volatility'} |
+| **Rolling 20-Day Z-Score** | **{test_results.get('z_score_20')}σ** | {'Multi-Sigma Statistical Divergence' if abs(test_results.get('z_score_20', 0)) >= 2.0 else 'Within Gaussian Norms'} |
+| **14-Day RSI** | **{test_results.get('rsi_14')}** | {'Oversold (<30)' if test_results.get('rsi_14', 50) <= 30 else ('Overbought (>75)' if test_results.get('rsi_14', 50) >= 75 else 'Neutral Momentum')} |
+| **ATR Volatility (14-Day)** | **{test_results.get('atr_14_pct')}%** | Baseline Asset Volatility |
+| **50-Day Trend State** | **{test_results.get('sma50_trend')}** | Market Regime Filter |
+| **Volume Absorption Ratio** | **{test_results.get('vol_ratio_5d_vs_30d')}x** | {'High Volume Activity' if test_results.get('vol_ratio_5d_vs_30d', 1) > 1.5 else 'Average Volume'} |
+| **Strategic Edge Verdict** | **{test_results.get('verdict')}** | Score: {test_results.get('opportunity_score')}/10 |
 
 ---
 
@@ -783,7 +852,7 @@ def generate_review_package(opportunity: dict, research: dict, test_results: dic
 * **Proposed Title**: **{title}**
 * **Subtitle**: *{subtitle}*
 * **Word Count**: **{word_count} words** (~{read_time} min Medium read)
-* **Accompanying Code**: Complete runnable Python/Colab script embedded in Section 7.
+* **Embedded Project**: Full standalone Python backtest script with signal logic and performance metrics.
 * **Full Draft Path**: [`latest_medium_draft.md`](latest_medium_draft.md)
 * **Plain Text (Ready to Copy)**: [`latest_medium_draft.txt`](latest_medium_draft.txt)
 
@@ -793,7 +862,7 @@ def generate_review_package(opportunity: dict, research: dict, test_results: dic
 
 - [ ] **Review Article Draft**: Read [`latest_medium_draft.md`](latest_medium_draft.md)
 - [ ] **Copy & Paste to Medium**: Copy text from [`latest_medium_draft.txt`](latest_medium_draft.txt)
-- [ ] **Verify Python Project**: Run the embedded Colab script to inspect the backtest
+- [ ] **Verify Python Project**: Run the embedded Python/Colab backtest script
 - [ ] **Publish Status**: Ready to Publish
 
 ---
@@ -836,9 +905,10 @@ def save_all_deliverables(opportunity: dict, research: dict, test_results: dict,
     history = load_topic_history()
     history.append({
         "date": today_date,
+        "trading_concept": opportunity.get("trading_concept", opportunity.get("headline")),
+        "concept_paradigm": opportunity.get("concept_paradigm", opportunity.get("anomaly_type")),
         "ticker": opportunity.get("ticker"),
         "title": opportunity.get("headline"),
-        "anomaly_type": opportunity.get("anomaly_type"),
         "verdict": test_results.get("verdict"),
         "file": filename
     })
@@ -846,39 +916,40 @@ def save_all_deliverables(opportunity: dict, research: dict, test_results: dict,
     log(f"Topic history updated ({len(history)} entries tracked).")
 
 
-def run_cycle(manual_ticker: str = "", dry_run: bool = False):
-    """Execute complete workflow: Scan → Find Opportunity → Research → Test → Write → Give to You."""
+def run_cycle(manual_ticker: str = "", manual_concept: str = "", dry_run: bool = False):
+    """Execute complete workflow: Scan → Formulate Trading Concept → Research → Test → Write → Give to You."""
     log("=========================================================================")
-    log("Rowan is beginning the Autonomous Market Opportunity & Writing cycle...")
+    log("Rowan is beginning the Autonomous Trading Concept & Writing cycle...")
     log("=========================================================================")
 
     # Step 1: Scan Market
-    log("Stage 1/6: Scanning market (Quantitative watchlist + 7 Anomaly news vectors)...")
+    log("Stage 1/6: Scanning market (Quantitative watchlist + Market & Quant news vectors)...")
     quant_anomalies = scan_quantitative_watchlist()
     news_items = scan_news_anomalies()
 
-    # Step 2: Find Opportunity / Idea
-    log("Stage 2/6: Analyzing anomalies and selecting highest-conviction market situation...")
+    # Step 2: Formulate Concept & Opportunity
+    log("Stage 2/6: Formulating innovative trading concept and selecting test asset...")
     history = load_topic_history()
-    opportunity = find_opportunity_idea(quant_anomalies, news_items, history, manual_ticker=manual_ticker)
-    log(f"Identified Opportunity: [{opportunity.get('ticker')}] {opportunity.get('headline')}")
-    log(f"Anomaly Archetype: {opportunity.get('anomaly_type')}")
-    log(f"Working Hypothesis: {opportunity.get('hypothesis')}")
+    opportunity = find_opportunity_idea(quant_anomalies, news_items, history, manual_ticker=manual_ticker, manual_concept=manual_concept)
+    log(f"Trading Concept: [{opportunity.get('trading_concept')}] ({opportunity.get('concept_paradigm')})")
+    log(f"Case Study Asset: [{opportunity.get('ticker')}] {opportunity.get('headline')}")
+    log(f"Core Concept Thesis: {opportunity.get('core_concept_thesis')}")
+    log(f"Strategy Hypothesis: {opportunity.get('hypothesis')}")
 
     if dry_run:
-        log("[Dry Run Complete] Opportunity identified and formulated successfully.")
+        log("[Dry Run Complete] Trading concept formulated successfully.")
         return
 
     # Step 3: Research Stocks
-    log("Stage 3/6: Conducting deep stock research and fetching financial metrics...")
+    log("Stage 3/6: Conducting deep market research and fetching financial metrics...")
     research = research_stock_data(opportunity)
 
     # Step 4: Test the Idea
-    log("Stage 4/6: Testing the idea quantitatively (RSI, Bollinger Bands, Drawdown, Valuation)...")
+    log("Stage 4/6: Testing concept quantitatively (Volatility Bandwidth, Z-Score, ATR, RSI)...")
     test_results = test_the_idea(opportunity, research)
 
     # Step 5: Write Article
-    log("Stage 5/6: Writing 800-1,500 word Medium investment essay with runnable Colab project...")
+    log("Stage 5/6: Writing 1,000-1,800 word Medium trading concept article with runnable Python backtest...")
     article_md = write_investment_article(opportunity, research, test_results)
 
     # Step 6: Give it to You (Review Package)
@@ -895,13 +966,14 @@ def run_cycle(manual_ticker: str = "", dry_run: bool = False):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Rowan: Autonomous Market Opportunity Hunter & Medium Writer")
+    parser = argparse.ArgumentParser(description="Rowan: Autonomous Trading Concept Hunter & Medium Writer")
     parser.add_argument("--run-now", action="store_true", help="Trigger execution immediately")
-    parser.add_argument("--ticker", type=str, default="", help="Provide a custom ticker to research and test")
-    parser.add_argument("--dry-run", action="store_true", help="Scan and find opportunity without writing full draft")
+    parser.add_argument("--concept", type=str, default="", help="Specify a custom trading concept or strategy idea")
+    parser.add_argument("--ticker", type=str, default="", help="Provide a custom ticker to test the concept on")
+    parser.add_argument("--dry-run", action="store_true", help="Scan and formulate concept without writing full draft")
     args = parser.parse_args()
 
-    run_cycle(manual_ticker=args.ticker, dry_run=args.dry_run)
+    run_cycle(manual_ticker=args.ticker, manual_concept=args.concept, dry_run=args.dry_run)
 
 
 if __name__ == "__main__":

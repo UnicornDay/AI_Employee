@@ -53,5 +53,13 @@
     "anomaly_type": "ASX_UNUSUAL_VOLATILITY",
     "verdict": "ASYMMETRIC BOUNCE SETUP",
     "file": "2026-10-10_MGH_AX_maas_group_plunges_and_enters_trading_ha.md"
+  },
+  {
+    "date": "2026-10-11",
+    "ticker": "PLS.AX",
+    "title": "Pilbara Minerals drops 5.4% into severe oversold territory at an RSI of 24.8, piercing its lower Bollinger band despite reports of returning revenue growth.",
+    "anomaly_type": "FUNDAMENTALS_VS_PRICE_DIVERGENCE",
+    "verdict": "QUALITY AT A DISCOUNT (BUFFETT ANOMALY)",
+    "file": "2026-10-11_PLS_AX_pilbara_minerals_drops_5_4_into_severe_o.md"
   }
 ]
